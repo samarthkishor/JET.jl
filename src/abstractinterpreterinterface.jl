@@ -248,9 +248,6 @@ mutable struct JETInterpreter <: AbstractInterpreter
     # stashes `UncaughtExceptionReport`s that are not caught so far
     uncaught_exceptions::Vector{UncaughtExceptionReport}
 
-    # keeps reports that should be updated when returning back the parent frame (i.e. the next time we get back to inter-procedural context)
-    to_be_updated::Set{InferenceErrorReport}
-
     # keeps track of the current inference frame (needed for report cache reconstruction)
     current_frame::Union{Nothing,InferenceState}
 
@@ -321,7 +318,6 @@ end
                           cache_key,
                           InferenceErrorReport[],
                           UncaughtExceptionReport[],
-                          Set{InferenceErrorReport}(),
                           current_frame,
                           cache,
                           analysis_params,

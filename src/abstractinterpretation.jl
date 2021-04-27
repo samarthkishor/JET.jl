@@ -253,14 +253,17 @@ function CC.abstract_call_method(interp::JETInterpreter, method::Method, @nospec
 end
 
 function update_reports!(interp::JETInterpreter, sv::InferenceState)
-    rs = interp.to_be_updated
-    if !isempty(rs)
+    updates = update_store(sv)
+    if !isempty(updates)
         vf = get_virtual_frame(interp, sv)
-        for r in rs
-            pushfirst!(r.st, vf)
+        for update in updates
+            pushfirst!(update.st, vf)
         end
-        empty!(rs)
     end
+    append!(report_store(sv), updates)
+    empty!(updates)
+
+    unique!(report_identity_key, report_store(sv))
 end
 
 @static if isdefined(CC, :abstract_invoke)
