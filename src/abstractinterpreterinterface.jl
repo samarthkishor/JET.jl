@@ -432,13 +432,15 @@ JETAnalysisParams(interp::JETInterpreter) = interp.analysis_params
 JETLogger(interp::JETInterpreter) = interp.logger
 
 # TODO do report filtering or something configured by `JETAnalysisParams(interp)`
-function report!(interp::JETInterpreter, report::InferenceErrorReport)
-    push!(interp.reports, report)
-end
+report!(frame::InferenceState, report::InferenceErrorReport) =
+    report!(frame.result, report)
+report!(result::InferenceResult, report::InferenceErrorReport) =
+    push!((result.metadata::FrameReports).reports, report)
 
-function stash_uncaught_exception!(interp::JETInterpreter, report::UncaughtExceptionReport)
-    push!(interp.uncaught_exceptions, report)
-end
+stash_uncaught_exception!(frame::InferenceState, report::UncaughtExceptionReport) =
+    stash_uncaught_exception!(frame.result, report)
+stash_uncaught_exception!(result::InferenceResult, report::UncaughtExceptionReport) =
+    push!((frame.metadata::FrameReports).uncaught_exceptions, report)
 
 # check if we're in a toplevel module
 @inline istoplevel(interp::JETInterpreter, sv::InferenceState)    = istoplevel(interp, sv.linfo)

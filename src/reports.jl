@@ -157,13 +157,13 @@ function cache_report!(cache, report::T) where {T<:InferenceErrorReport}
 end
 
 function restore_cached_report!(cache::InferenceErrorReportCache,
-                                interp#=::JETInterpreter=#,
+                                sv::InferenceState,
                                 )
     report = restore_cached_report(cache)
     if isa(report, UncaughtExceptionReport)
-        stash_uncaught_exception!(interp, report)
+        stash_uncaught_exception!(sv, report)
     else
-        report!(interp, report)
+        report!(sv, report)
     end
     return report
 end
